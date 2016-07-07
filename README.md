@@ -1,2 +1,2 @@
-# lonely-coconut
+# where-my-coconut
 Coconuts. At your fingertips.
