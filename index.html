@@ -1,0 +1,192 @@
+<html>
+  <head>
+    <title>Title</title>
+
+    <script src="https://code.jquery.com/jquery-3.0.0.min.js" integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0=" crossorigin="anonymous"></script>
+
+    <style>
+        /* FONTS */
+        @font-face {
+            font-family: segoelight;
+            src: url("https://s3-us-west-2.amazonaws.com/wheremycoconut/segoe-light.ttf");
+        }
+
+        body {
+            font-family: segoelight;
+        }
+
+        /* POSITIONING */
+
+        /* If phone or fablet */
+        #map {
+            height: 60%;
+            width: 100%;
+        }
+        #list {
+            height: 40%;
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+        }
+
+        /* If desktop or big tablet */
+        @media screen and (min-width: 1000px) {
+            #map {
+                height: 100%;
+                width: calc(100% - 300px);
+            }
+            #list {
+                height: 100%;
+                width: 292px;
+                position: absolute;
+                top: 0;
+                right: 8px;
+            }
+        }
+
+        /* STYLE */
+        .coconut-title {
+            text-align: center;
+            font-size: 32px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .coconut {
+            text-align: center;
+            margin-top: 3px;
+            margin-bottom: 3px;
+            padding-top: 8px;
+            padding-bottom: 8px;
+            background-color: #EBEBFF;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        .coconut:hover {
+            background-color: #E6E6FA;
+        }
+    </style>
+  </head>
+  
+  <body>
+    <div id="map"></div>
+    <div id="list">
+        <div class="coconut-title">where my coconut</div>
+        <div></div>
+    </div>
+
+    <script>
+    $(function(){
+        $.get('https://s3-us-west-2.amazonaws.com/wheremycoconut/coconuts.json', function(data) {
+            coconuts = JSON.parse(data);
+            if (window.mapLoaded) {
+                initCoconuts();
+            } else {
+                coconutsLoaded = true;
+            }
+        });
+    });
+
+    function okMap() {
+        if (window.coconutsLoaded) {
+            initCoconuts();
+        } else {
+            mapLoaded = true;
+        }
+    }
+
+    function initCoconuts() {
+        getLocation(function(location) {
+            if (location.error) {
+                userLat = 47.644459;
+                userLng = -122.130185;
+            } else {
+                userLat = location.coords.latitude;
+                userLng = location.coords.longitude;
+            }
+
+            var mapDiv = document.getElementById('map');
+            var map = new google.maps.Map(mapDiv, {
+                center: {lat: userLat, lng: userLng},
+                zoom: 16
+            });
+
+            sortCoconuts();
+
+            markers = [];
+            coconuts.forEach(function(coconut) {
+                var marker = new google.maps.Marker({
+                    position: {'lat': coconut.lat, 'lng': coconut.lng},
+                    map: map,
+                    animation: google.maps.Animation.DROP,
+                    title: coconut.name
+                });
+                markers.push(marker);
+            });
+
+            var list = $('#list').last();
+            coconuts.forEach(function(coconut) {
+                list.append('<div class="coconut" onmouseover="markerHover(this)" onmouseout="markerStop(this)">' + coconut.name + '</div>');
+            });
+        });
+    }
+
+    function getLocation(callback) {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(callback);
+        } else {
+            alert("Geolocation is not supported by this browser.");
+            callback({error: "nice"})
+        }
+    }
+
+    function markerHover(div) {
+        markers.forEach(function(marker) {
+            if (marker.title === div.textContent) {
+                marker.setAnimation(google.maps.Animation.BOUNCE);
+            }
+        });
+    }
+
+    function markerStop(div) {
+        markers.forEach(function(marker) {
+            if (marker.title === div.textContent) {
+                marker.setAnimation(null);
+            }
+        });
+    }
+
+    function sortCoconuts() {
+        coconuts = coconuts.sort(function(a, b) {
+            a_distance = calculateDistance(userLat, userLng, a.lat, a.lng);
+            b_distance = calculateDistance(userLat, userLng, b.lat, b.lng);
+            return a_distance - b_distance;
+        });
+    }
+
+    function calculateDistance(lat1, lng1, lat2, lng2) {
+        var R = 6371e3; // metres
+        var psi1 = degrees_to_radians(lat1);
+        var psi2 = degrees_to_radians(lat2);
+        var delta_psi = degrees_to_radians(lat2-lat1);
+        var delta_lambda = degrees_to_radians(lng2-lng1);
+
+        var a = Math.sin(delta_psi/2) * Math.sin(delta_psi/2) +
+                Math.cos(psi1) * Math.cos(psi2) *
+                Math.sin(delta_lambda/2) * Math.sin(delta_lambda/2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+        return R * c;
+    }
+
+    function degrees_to_radians(degrees)  
+    {  
+        var pi = Math.PI;  
+        return degrees * (pi/180);  
+    } 
+    
+    </script>
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCEpJbuCUVvJ9AI4ZgldILvGpWq5yf5pZ0&callback=okMap">
+    </script>
+  </body>
+</html>
