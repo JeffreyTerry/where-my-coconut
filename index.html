@@ -124,16 +124,27 @@
 
             sortCoconuts();
 
+            // MARKERS //
             markers = [];
             coconuts.forEach(function(coconut) {
                 var marker = new google.maps.Marker({
                     position: {'lat': coconut.lat, 'lng': coconut.lng},
                     map: map,
                     animation: google.maps.Animation.DROP,
-                    title: coconut.name
+                    title: coconut.name,
+                    icon: 'coconut_water.png'
                 });
                 markers.push(marker);
             });
+
+            var marker = new google.maps.Marker({
+                position: {'lat': userLat, 'lng': userLng},
+                map: map,
+                title: 'My Location',
+                icon: 'blue_dot.png'
+            });
+
+            // POPULATE LIST //
 
             var list = $('#list').last();
             coconuts.forEach(function(coconut) {
