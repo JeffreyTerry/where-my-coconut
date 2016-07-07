@@ -2,10 +2,10 @@
   <head>
     <title>where my coconut</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <link rel="stylesheet" type="text/css" href="loaders.css">
 
     <script src="https://code.jquery.com/jquery-3.0.0.min.js" integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0=" crossorigin="anonymous"></script>
-
     <script type="text/javascript" src="location-utils.js"></script>
 
     <style>
@@ -54,6 +54,7 @@
             font-size: 32px;
             margin-top: 10px;
             margin-bottom: 10px;
+            cursor: default;
         }
         .coconut {
             text-align: center;
@@ -61,24 +62,31 @@
             margin-bottom: 3px;
             padding-top: 8px;
             padding-bottom: 8px;
-            background-color: #EBEBFF;
+            background-color: #E6E6FA;
+            /*background-color: #EBEBFF;*/
             cursor: pointer;
             font-size: 20px;
         }
         .coconut:hover {
-            background-color: #E6E6FA;
+            /*background-color: #E6E6FA;*/
+            color: white;
+            background-color: #967BB6;
         }
     </style>
   </head>
   
   <body>
-    <div id="map"></div>
+    <div id="map">
+        <div class="map-loader"></div>
+    </div>
     <div id="list">
         <div class="coconut-title">where my coconut</div>
         <div></div>
     </div>
 
+
     <script>
+
     $(function(){
         $.get('https://s3-us-west-2.amazonaws.com/wheremycoconut/coconuts.json', function(data) {
             coconuts = JSON.parse(data);
@@ -143,22 +151,27 @@
     }
 
     function markerHover(div) {
-        markers.forEach(function(marker) {
-            if (marker.title === div.textContent) {
-                marker.setAnimation(google.maps.Animation.BOUNCE);
-            }
-        });
+        if (markers) {
+            markers.forEach(function(marker) {
+                if (marker.title === div.textContent) {
+                    marker.setAnimation(google.maps.Animation.BOUNCE);
+                }
+            });
+        }
     }
 
     function markerStop(div) {
-        markers.forEach(function(marker) {
-            if (marker.title === div.textContent) {
-                marker.setAnimation(null);
-            }
-        });
+        if (markers) {
+            markers.forEach(function(marker) {
+                if (marker.title === div.textContent) {
+                    marker.setAnimation(null);
+                }
+            });
+        }
     }
 
     </script>
+
     <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCEpJbuCUVvJ9AI4ZgldILvGpWq5yf5pZ0&callback=okMap">
     </script>
