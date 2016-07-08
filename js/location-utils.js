@@ -34,7 +34,7 @@ function repositionUserMarker(lat, lng) {
         position: {'lat': lat, 'lng': lng},
         map: map,
         title: 'My Location',
-        icon: 'blue_dot.png'
+        icon: 'imgs/blue_dot.png'
     });
 }
 

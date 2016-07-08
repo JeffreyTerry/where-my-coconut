@@ -2,18 +2,18 @@
 <head>
     <title>where my coconut</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
-    <link rel="stylesheet" type="text/css" href="loaders.css">
+    <link rel="icon" type="image/png" sizes="32x32" href="imgs/favicon.png">
+    <link rel="stylesheet" type="text/css" href="css/loaders.css">
 
     <script src="https://code.jquery.com/jquery-3.0.0.min.js" integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0=" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="location-utils.js"></script>
-    <script type="text/javascript" src="miscellaneous-utils.js"></script>
+    <script type="text/javascript" src="js/location-utils.js"></script>
+    <script type="text/javascript" src="js/miscellaneous-utils.js"></script>
 
     <style>
         /* FONTS */
         @font-face {
             font-family: segoelight;
-            src: url("https://s3-us-west-2.amazonaws.com/wheremycoconut/segoe-light.ttf");
+            src: url("fonts/segoe-light.ttf");
         }
 
         body {
@@ -268,7 +268,7 @@
                     map: map,
                     animation: google.maps.Animation.DROP,
                     title: coconut.name,
-                    icon: 'coconut_water.png'
+                    icon: 'imgs/coconut_water.png'
                 });
                 markers.push(marker);
             });
