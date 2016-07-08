@@ -111,14 +111,18 @@ function markerStop(div) {
 // COCONUT STUFF //
 
 function initCoconuts() {
+    console.log('here 3');
     getCurrentLocation(function(location) {
+        console.log('here 4');
         if (location.error) {
             // The center of the Microsoft Campus
             userLat = DEFAULT_CENTER.lat;
             userLng = DEFAULT_CENTER.lng;
+            console.log('here 5');
         } else {
             userLat = location.coords.latitude;
             userLng = location.coords.longitude;
+            console.log('here 6');
         }
 
         // Load the map //
@@ -157,7 +161,7 @@ function initCoconuts() {
                 map: map,
                 animation: google.maps.Animation.DROP,
                 title: coconut.name,
-                icon: '../imgs/coconut_water.png'
+                icon: 'imgs/coconut_water.png'
             });
             markers.push(marker);
         });
