@@ -7,9 +7,11 @@ function getCurrentLocation(callback) {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(callback, function() {
             // On failure, do this
+            console.log('here 1');
             getLocationUsingGoogleMaps(callback)
         });
     } else {
+        console.log('here 2');
         getLocationUsingGoogleMaps(callback)
     }
 }
