@@ -182,7 +182,7 @@
             repositionUserMarker(userLat, userLng);
 
             // Check to see if we're showing directions to a coconut right now
-            if (destination_coconut) {
+            if (window.destination_coconut) {
                 showDirections();
             } else {
                 map.panTo(new google.maps.LatLng(userLat, userLng));
