@@ -1,5 +1,5 @@
 <html>
-  <head>
+<head>
     <title>where my coconut</title>
 
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
@@ -121,12 +121,13 @@
             text-align: center;
         }
     </style>
-  </head>
-  
-  <body>
+</head>
+
+<body>
     <div id="map">
         <div class="map-loader"></div>
     </div>
+    <div id="directionsPanel" ></div>
     <div id="list">
         <!-- <div class="title location-title">my location</div> -->
         <div class="input-box my-location-input">
@@ -179,7 +180,13 @@
             userLng = location.lng;
 
             repositionUserMarker(userLat, userLng);
-            map.panTo(new google.maps.LatLng(userLat, userLng));
+
+            // Check to see if we're showing directions to a coconut right now
+            if (destination_coconut) {
+                showDirections();
+            } else {
+                map.panTo(new google.maps.LatLng(userLat, userLng));
+            }
 
             sortCoconutsByDistance();
             populateCoconutList();
@@ -234,6 +241,23 @@
                 console.log('here');
             });
 
+
+            // DIRECTIONS //
+
+            directionsDisplay = new google.maps.DirectionsRenderer();
+            directionsService = new google.maps.DirectionsService();
+            
+
+            mapDiv = document.getElementById('map');
+            map = new google.maps.Map(mapDiv, {
+                center: {lat: userLat, lng: userLng},
+                zoom: 16
+            });
+            
+            directionsDisplay.setMap(map);
+            directionsDisplay.setPanel(document.getElementById("directionsPanel"));
+
+
             sortCoconutsByDistance();
 
             // MARKERS //
@@ -265,14 +289,40 @@
         });
     }
 
+    function showDirections(div) {
+        //direction service api call to show a route from you to the marker on the map
+        if (div) {
+            destination_coconut = div.textContent;
+        }
+
+        if (markers) {
+            markers.forEach(function(marker) {
+                if (marker.title === destination_coconut) {
+                    var start = new google.maps.LatLng(userLat, userLng);
+                    var end = marker.getPosition();
+                    var request = {
+                        origin:start,
+                        destination:end,
+                        travelMode: google.maps.TravelMode.DRIVING
+                    };
+                    //console.log(request);
+                    directionsService.route(request, function(response, status) {
+                        if (status == google.maps.DirectionsStatus.OK) {
+                            directionsDisplay.setDirections(response);
+                        }
+                    });
+                }
+            });
+        }
+    }
+
     function populateCoconutList() {
         var list = $('#list > div.coconut-list');
         list.empty();
         coconuts.forEach(function(coconut) {
-            list.append('<div class="coconut" onmouseover="markerHover(this)" onmouseout="markerStop(this)">' + coconut.name + '</div>');
+            list.append('<div class="coconut" onmouseover="markerHover(this)" onmouseout="markerStop(this)" onClick="showDirections(this)">' + coconut.name + '</div>');
         });
     }
-
 
     // INITIALIZATION & SETUP //
 
