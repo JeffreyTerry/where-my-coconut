@@ -113,7 +113,7 @@ function markerStop(div) {
 function initCoconuts() {
     console.log('here 3');
     getCurrentLocation(function(location) {
-        console.log('here 4');
+        console.log('here 4', location);
         if (location.error) {
             // The center of the Microsoft Campus
             userLat = DEFAULT_CENTER.lat;
