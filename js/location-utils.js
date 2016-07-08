@@ -17,13 +17,29 @@ function getCurrentLocation(callback) {
 }
 
 function getLocationUsingGoogleMaps(callback) {
-    jQuery.post("https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyBwxzwTENmcAmiLA3B85GVuTE2oJbGkh-4", {considerIp: false}, function(data) {
-        console.log('google maps data', data);
-        callback({coords: {latitude: data.location.lat, longitude: data.location.lng}});
-    })
-    .fail(function(err) {
-        callback({error: 'Could not find user\'s location'});
+    $.ajax({
+        url: "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyBwxzwTENmcAmiLA3B85GVuTE2oJbGkh-4",
+        type: "POST",
+        data: {considerIp: false},
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(data){
+            console.log('google maps data', data);
+            callback({coords: {latitude: data.location.lat, longitude: data.location.lng}});
+        },
+        error: function(err) {
+            console.log("ERRORR", err);
+            callback({error: 'Could not find user\'s location'});
+        }
+
     });
+    // jQuery.post("https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyBwxzwTENmcAmiLA3B85GVuTE2oJbGkh-4", {considerIp: false}, function(data) {
+    //     console.log('google maps data', data);
+    //     callback({coords: {latitude: data.location.lat, longitude: data.location.lng}});
+    // })
+    // .fail(function(err) {
+    //     callback({error: 'Could not find user\'s location'});
+    // });
 };
 
 function repositionUserMarker(lat, lng) {
