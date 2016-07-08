@@ -4,14 +4,12 @@ var DEFAULT_CENTER = {lat: 47.644459, lng: -122.130185};
 // GEOLOCATION //
 
 function getCurrentLocation(callback) {
-    if (navigator.geolocation) {
+    if (false && navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(callback, function() {
             // On failure, do this
-            console.log('here 1');
             getLocationUsingGoogleMaps(callback)
         });
     } else {
-        console.log('here 2');
         getLocationUsingGoogleMaps(callback)
     }
 }
@@ -20,26 +18,17 @@ function getLocationUsingGoogleMaps(callback) {
     $.ajax({
         url: "https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyBwxzwTENmcAmiLA3B85GVuTE2oJbGkh-4",
         type: "POST",
-        data: {considerIp: false},
+        data: JSON.stringify({"considerIp": false}),  // If we use the ip address to locate any computer using Microsoft's network, we get a really dank value.
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function(data){
-            console.log('google maps data', data);
             callback({coords: {latitude: data.location.lat, longitude: data.location.lng}});
         },
         error: function(err) {
-            console.log("ERRORR", err);
-            callback({error: 'Could not find user\'s location'});
+            callback({error: err.responseJSON.error});
         }
 
     });
-    // jQuery.post("https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyBwxzwTENmcAmiLA3B85GVuTE2oJbGkh-4", {considerIp: false}, function(data) {
-    //     console.log('google maps data', data);
-    //     callback({coords: {latitude: data.location.lat, longitude: data.location.lng}});
-    // })
-    // .fail(function(err) {
-    //     callback({error: 'Could not find user\'s location'});
-    // });
 };
 
 function repositionUserMarker(lat, lng) {
