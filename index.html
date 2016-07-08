@@ -6,29 +6,33 @@
     <link rel="stylesheet" type="text/css" href="css/loaders.css">
 
     <script src="https://code.jquery.com/jquery-3.0.0.min.js" integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="js/arrive.min.js"></script>
     <script type="text/javascript" src="js/location-utils.js"></script>
     <script type="text/javascript" src="js/miscellaneous-utils.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/google-maps-places-search.css">
 </head>
 
 <body>
+    <input id="pac-input" class="controls" type="text" placeholder="choose current location">
     <div id="map">
         <div class="map-loader"></div>
     </div>
     <div id="directionsPanel" ></div>
     <div id="list">
         <!-- <div class="title location-title">my location</div> -->
-        <div class="input-box my-location-input">
+        <!-- <div class="input-box my-location-input">
             <input type="text" placeholder="choose current location" onkeydown="searchOnEnterKey(this)"/>
-        </div>
-        <div class="title coconut-title">nearest coconut</div>
+        </div> -->
+        <div class="title coconut-title">nearest coconuts</div>
         <div class="coconut-list"></div>
     </div>
 
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBwxzwTENmcAmiLA3B85GVuTE2oJbGkh-4&libraries=places"></script>
     <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/google-maps-places-search.js"></script>
     
   </body>
 </html>

@@ -31,7 +31,24 @@ function getLocationUsingGoogleMaps(callback) {
     });
 };
 
-function repositionUserMarker(lat, lng) {
+function updateCurrentLocation(lat, lng) {
+    userLat = lat;
+    userLng = lng;
+
+    repositionCurrentLocationMarker(userLat, userLng);
+
+    // Check to see if we're showing directions to a coconut right now
+    if (window.destination_coconut) {
+        showDirections();
+    } else {
+        map.panTo(new google.maps.LatLng(userLat, userLng));
+    }
+
+    sortCoconutsByDistance();
+    populateCoconutList();
+}
+
+function repositionCurrentLocationMarker(lat, lng) {
     // Check to see if we need to remove the old user marker.
     if (window.user_marker) {
         user_marker.setMap(null);
