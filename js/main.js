@@ -31,29 +31,6 @@ function searchOnEnterKey(element) {
     }
 }
 
-function searchForLocationAndSetToCurrent(place_name) {
-    getLocationByName(place_name, function(location) {
-        // On success
-        userLat = location.lat;
-        userLng = location.lng;
-
-        repositionUserMarker(userLat, userLng);
-
-        // Check to see if we're showing directions to a coconut right now
-        if (window.destination_coconut) {
-            showDirections();
-        } else {
-            map.panTo(new google.maps.LatLng(userLat, userLng));
-        }
-
-        sortCoconutsByDistance();
-        populateCoconutList();
-    }, function() {
-        // On failure
-        alert('Could not find "' + place_name + '"');
-    });
-}
-
 
 // DIRECTION SEARCH //
 
@@ -107,6 +84,10 @@ function markerStop(div) {
     }
 }
 
+function grayOutMap() {
+    $('#map').append("<div id='map-overlay'></div>");
+}
+
 
 // COCONUT STUFF //
 
@@ -121,35 +102,35 @@ function initCoconuts() {
             userLng = location.coords.longitude;
         }
 
-        // Load the map //
+        // Load the map, then initialize the search box //
         var mapDiv = document.getElementById('map');
         map = new google.maps.Map(mapDiv, {
             center: {lat: userLat, lng: userLng},
-            zoom: 16
-        }, function() {
-            console.log('here');
+            zoom: 16,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
         });
 
+        initSearchBox();
 
-        // DIRECTIONS //
+        // If we couldn't automatically find the user's location, let's ask them for it.
+        // if (location.error) {  TODO
+        //     setTimeout(function() {
+        //         grayOutMap();
+        //     }, 1000);
+        // }
+        
+        // Set up google maps directions api //
 
         directionsDisplay = new google.maps.DirectionsRenderer();
         directionsService = new google.maps.DirectionsService();
         
-
-        mapDiv = document.getElementById('map');
-        map = new google.maps.Map(mapDiv, {
-            center: {lat: userLat, lng: userLng},
-            zoom: 16
-        });
-        
         directionsDisplay.setMap(map);
         directionsDisplay.setPanel(document.getElementById("directionsPanel"));
 
-
+        // Sort the coconuts //
         sortCoconutsByDistance();
 
-        // MARKERS //
+        // Place markers //
         markers = [];
         coconuts.forEach(function(coconut) {
             var marker = new google.maps.Marker({
@@ -162,7 +143,9 @@ function initCoconuts() {
             markers.push(marker);
         });
 
-        repositionUserMarker(userLat, userLng);
+        repositionCurrentLocationMarker(userLat, userLng);
+
+        // Set up the list of coconuts
         populateCoconutList();
         $('#list').css('visibility', 'visible');
     });

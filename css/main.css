@@ -62,12 +62,10 @@ body {
     padding-top: 8px;
     padding-bottom: 8px;
     background-color: #E6E6FA;
-    /*background-color: #EBEBFF;*/
     cursor: pointer;
     font-size: 20px;
 }
 .coconut:hover {
-    /*background-color: #E6E6FA;*/
     color: white;
     background-color: #967BB6;
 }
@@ -77,34 +75,16 @@ body {
     visibility: hidden;
 }
 
-/* INPUT BOXES */
-input[type="text"] {
-    display: block;
-    margin: 0;
-    width: 100%;
-    font-family: sans-serif;
-    font-size: 18px;
-    appearance: none;
-    box-shadow: none;
-    border-radius: none;
-}
-input[type="text"]:focus {
-    outline: none;
+#pac-input {
+    display: none;
 }
 
-.input-box input[type="text"] {
-    padding: 10px;
-    border: solid 1px #E6E6FA;
-    transition: box-shadow 0.3s, border 0.3s;
-}
-.input-box input[type="text"]:focus,
-.input-box input[type="text"].focus {
-    border: solid 1px #967BB6;
-    box-shadow: 0 0 5px 1px #E6E6FA;
-}
-
-.my-location-input input {
-    margin-top: 8px;
+#map-overlay {
+    /*background-color: rgba(150, 123, 184, 0.5);*/
+    background-color: rgba(230, 230, 250, 0.8);
+    position: absolute;
     width: 100%;
-    text-align: center;
+    height: 100%;
+    top: 0;
+    left: 0;
 }
