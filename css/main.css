@@ -1,0 +1,110 @@
+/* FONTS */
+@font-face {
+    font-family: segoelight;
+    src: url("../fonts/segoe-light.ttf");
+}
+
+body {
+    font-family: segoelight;
+}
+
+/* POSITIONING */
+
+/* If phone or fablet */
+@media screen and (max-width: 1000px) {
+    #map {
+        height: 60%;
+        width: 100%;
+    }
+    #list {
+        height: 40%;
+        width: calc(100% - 16px);
+        position: absolute;
+        bottom: 0;
+        right: 8px;
+        left: 8px;
+    }
+}
+
+/* If desktop or big tablet */
+@media screen and (min-width: 1000px) {
+    #map {
+        height: 100%;
+        width: calc(100% - 300px);
+    }
+    #list {
+        height: 100%;
+        width: 292px;
+        position: absolute;
+        top: 0;
+        right: 8px;
+    }
+}
+
+/* STYLE */
+#list .title {
+    text-align: center;
+    font-size: 32px;
+    cursor: default;
+}
+.location-title {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.coconut-title {
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+.coconut {
+    text-align: center;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    background-color: #E6E6FA;
+    /*background-color: #EBEBFF;*/
+    cursor: pointer;
+    font-size: 20px;
+}
+.coconut:hover {
+    /*background-color: #E6E6FA;*/
+    color: white;
+    background-color: #967BB6;
+}
+
+/* EFFECTS */
+#list {
+    visibility: hidden;
+}
+
+/* INPUT BOXES */
+input[type="text"] {
+    display: block;
+    margin: 0;
+    width: 100%;
+    font-family: sans-serif;
+    font-size: 18px;
+    appearance: none;
+    box-shadow: none;
+    border-radius: none;
+}
+input[type="text"]:focus {
+    outline: none;
+}
+
+.input-box input[type="text"] {
+    padding: 10px;
+    border: solid 1px #E6E6FA;
+    transition: box-shadow 0.3s, border 0.3s;
+}
+.input-box input[type="text"]:focus,
+.input-box input[type="text"].focus {
+    border: solid 1px #967BB6;
+    box-shadow: 0 0 5px 1px #E6E6FA;
+}
+
+.my-location-input input {
+    margin-top: 8px;
+    width: 100%;
+    text-align: center;
+}
