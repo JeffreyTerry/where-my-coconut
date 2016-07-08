@@ -1,4 +1,9 @@
-function getLocation(callback) {
+// CONSTANTS //
+var DEFAULT_CENTER = {lat: 47.644459, lng: -122.130185};
+
+// GEOLOCATION //
+
+function getCurrentLocation(callback) {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(callback, function() {
             // On failure, do this
@@ -19,6 +24,44 @@ function getLocationUsingGoogleMaps(callback) {
     });
 };
 
+function repositionUserMarker(lat, lng) {
+    // Check to see if we need to remove the old user marker.
+    if (window.user_marker) {
+        user_marker.setMap(null);
+    }
+
+    user_marker = new google.maps.Marker({
+        position: {'lat': lat, 'lng': lng},
+        map: map,
+        title: 'My Location',
+        icon: 'blue_dot.png'
+    });
+}
+
+
+// PLACE SEARCH //
+
+function getLocationByName(place_name, success, failure) {
+    var service = new google.maps.places.PlacesService(map);
+    // service.nearbySearch({
+    //   location: DEFAULT_CENTER,
+    //   radius: 2000  // in meters
+    // }, function(results, status) {
+    service.textSearch({query: place_name}, function(results, status) {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+            var location = {
+                lat: results[0].geometry.location.lat(),
+                lng: results[0].geometry.location.lng()
+            };
+            success(location);
+        } else if (failure) {
+            failure();
+        }
+    });
+}
+
+// UTILITY FUNCTIONS //
+
 function calculateDistance(lat1, lng1, lat2, lng2) {
     var R = 6371e3; // metres
     var psi1 = degrees_to_radians(lat1);
@@ -38,4 +81,4 @@ function degrees_to_radians(degrees)
 {  
     var pi = Math.PI;  
     return degrees * (pi/180);  
-} 
+}

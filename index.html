@@ -7,6 +7,7 @@
 
     <script src="https://code.jquery.com/jquery-3.0.0.min.js" integrity="sha256-JmvOoLtYsmqlsWxa7mDSLMwa6dZ9rrIdtrrVYRnDRH0=" crossorigin="anonymous"></script>
     <script type="text/javascript" src="location-utils.js"></script>
+    <script type="text/javascript" src="miscellaneous-utils.js"></script>
 
     <style>
         /* FONTS */
@@ -22,15 +23,19 @@
         /* POSITIONING */
 
         /* If phone or fablet */
-        #map {
-            height: 60%;
-            width: 100%;
-        }
-        #list {
-            height: 40%;
-            width: 100%;
-            position: absolute;
-            bottom: 0;
+        @media screen and (max-width: 1000px) {
+            #map {
+                height: 60%;
+                width: 100%;
+            }
+            #list {
+                height: 40%;
+                width: calc(100% - 16px);
+                position: absolute;
+                bottom: 0;
+                right: 8px;
+                left: 8px;
+            }
         }
 
         /* If desktop or big tablet */
@@ -49,12 +54,18 @@
         }
 
         /* STYLE */
-        .coconut-title {
+        #list .title {
             text-align: center;
             font-size: 32px;
+            cursor: default;
+        }
+        .location-title {
             margin-top: 10px;
             margin-bottom: 10px;
-            cursor: default;
+        }
+        .coconut-title {
+            margin-top: 15px;
+            margin-bottom: 10px;
         }
         .coconut {
             text-align: center;
@@ -72,6 +83,43 @@
             color: white;
             background-color: #967BB6;
         }
+
+        /* EFFECTS */
+        #list {
+            visibility: hidden;
+        }
+
+        /* INPUT BOXES */
+        input[type="text"] {
+            display: block;
+            margin: 0;
+            width: 100%;
+            font-family: sans-serif;
+            font-size: 18px;
+            appearance: none;
+            box-shadow: none;
+            border-radius: none;
+        }
+        input[type="text"]:focus {
+            outline: none;
+        }
+
+        .input-box input[type="text"] {
+            padding: 10px;
+            border: solid 1px #E6E6FA;
+            transition: box-shadow 0.3s, border 0.3s;
+        }
+        .input-box input[type="text"]:focus,
+        .input-box input[type="text"].focus {
+            border: solid 1px #967BB6;
+            box-shadow: 0 0 5px 1px #E6E6FA;
+        }
+
+        .my-location-input input {
+            margin-top: 8px;
+            width: 100%;
+            text-align: center;
+        }
     </style>
   </head>
   
@@ -80,86 +128,68 @@
         <div class="map-loader"></div>
     </div>
     <div id="list">
-        <div class="coconut-title">where my coconut</div>
-        <div></div>
+        <!-- <div class="title location-title">my location</div> -->
+        <div class="input-box my-location-input">
+            <input type="text" placeholder="choose current location" onkeydown="searchOnEnterKey(this)"/>
+        </div>
+        <div class="title coconut-title">nearest coconut</div>
+        <div class="coconut-list"></div>
     </div>
 
 
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCEpJbuCUVvJ9AI4ZgldILvGpWq5yf5pZ0&libraries=places"></script>
     <script>
 
-    $(function(){
-        $.get('https://s3-us-west-2.amazonaws.com/wheremycoconut/coconuts.json', function(data) {
-            coconuts = JSON.parse(data);
-            if (window.mapLoaded) {
-                initCoconuts();
-            } else {
-                coconutsLoaded = true;
+    // LOCATION SEARCH //
+    function searchOnEnterKey(element) {
+        // Check that this event was triggered by the "enter" key.
+        // Also check that the map has loaded.
+        if (event.keyCode == 13 && $('.map-loader').length == 0) {
+            var search_term = toTitleCase(element.value);
+            if (search_term.search(/^\s*building\s*\d+\s*$/i) != -1) {
+                search_term = "Microsoft " + search_term;
+            } else if (search_term.search(/^\s*\d+\s*$/) != -1) {
+                search_term = "Microsoft Building " + search_term;
+            } else if (search_term.search(/^\s*redwest\s*[a-z]\s*$/i) != -1) {
+                search_term = "Microsoft " + search_term;
+            } else if (search_term.search(/^\s*redwoods\s*[a-z]\s*$/i) != -1) {
+                search_term = "Microsoft " + search_term;
+            } else if (search_term.search(/^\s*studio\s*[a-z]\s*$/i) != -1) {
+                search_term = "Microsoft " + search_term;
+            } else if (search_term.search(/^\s*[a-z]\s*$/i) != -1) {
+                search_term = "Microsoft Studio " + search_term;
+            } else if (search_term.search(/^\s*the commons\s*$/i) != -1) {
+                search_term = "Microsoft " + search_term;
+            } else if (search_term.search(/^\s*commons\s*$/i) != -1) {
+                search_term = "Microsoft " + search_term;
+            } else if (search_term.search(/^\s*transit center\s*$/i) != -1) {
+                search_term = "Overlake " + search_term;
+            } else if (search_term.search(/^\s*otc\s*$/i) != -1) {
+                search_term = "Overlake Transit Center";
             }
-        });
-    });
-
-    function okMap() {
-        if (window.coconutsLoaded) {
-            initCoconuts();
-        } else {
-            mapLoaded = true;
+            element.value = search_term;
+            searchForLocationAndSetToCurrent(search_term);
         }
     }
 
-    function initCoconuts() {
-        getLocation(function(location) {
-            if (location.error) {
-                userLat = 47.644459;
-                userLng = -122.130185;
-            } else {
-                userLat = location.coords.latitude;
-                userLng = location.coords.longitude;
-            }
+    function searchForLocationAndSetToCurrent(place_name) {
+        getLocationByName(place_name, function(location) {
+            // On success
+            userLat = location.lat;
+            userLng = location.lng;
 
-            var mapDiv = document.getElementById('map');
-            var map = new google.maps.Map(mapDiv, {
-                center: {lat: userLat, lng: userLng},
-                zoom: 16
-            });
+            repositionUserMarker(userLat, userLng);
+            map.panTo(new google.maps.LatLng(userLat, userLng));
 
-            sortCoconuts();
-
-            // MARKERS //
-            markers = [];
-            coconuts.forEach(function(coconut) {
-                var marker = new google.maps.Marker({
-                    position: {'lat': coconut.lat, 'lng': coconut.lng},
-                    map: map,
-                    animation: google.maps.Animation.DROP,
-                    title: coconut.name,
-                    icon: 'coconut_water.png'
-                });
-                markers.push(marker);
-            });
-
-            var marker = new google.maps.Marker({
-                position: {'lat': userLat, 'lng': userLng},
-                map: map,
-                title: 'My Location',
-                icon: 'blue_dot.png'
-            });
-
-            // POPULATE LIST //
-
-            var list = $('#list').last();
-            coconuts.forEach(function(coconut) {
-                list.append('<div class="coconut" onmouseover="markerHover(this)" onmouseout="markerStop(this)">' + coconut.name + '</div>');
-            });
+            sortCoconutsByDistance();
+            populateCoconutList();
+        }, function() {
+            // On failure
+            alert('Could not find "' + place_name + '"');
         });
     }
 
-    function sortCoconuts() {
-        coconuts = coconuts.sort(function(a, b) {
-            a_distance = calculateDistance(userLat, userLng, a.lat, a.lng);
-            b_distance = calculateDistance(userLat, userLng, b.lat, b.lng);
-            return a_distance - b_distance;
-        });
-    }
+    // UI EFFECTS //
 
     function markerHover(div) {
         if (markers) {
@@ -181,10 +211,84 @@
         }
     }
 
-    </script>
 
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCEpJbuCUVvJ9AI4ZgldILvGpWq5yf5pZ0&callback=okMap">
+    // COCONUT STUFF //
+
+    function initCoconuts() {
+        getCurrentLocation(function(location) {
+            if (location.error) {
+                // The center of the Microsoft Campus
+                userLat = DEFAULT_CENTER.lat;
+                userLng = DEFAULT_CENTER.lng;
+            } else {
+                userLat = location.coords.latitude;
+                userLng = location.coords.longitude;
+            }
+
+            // Load the map //
+            var mapDiv = document.getElementById('map');
+            map = new google.maps.Map(mapDiv, {
+                center: {lat: userLat, lng: userLng},
+                zoom: 16
+            }, function() {
+                console.log('here');
+            });
+
+            sortCoconutsByDistance();
+
+            // MARKERS //
+            markers = [];
+            coconuts.forEach(function(coconut) {
+                var marker = new google.maps.Marker({
+                    position: {'lat': coconut.lat, 'lng': coconut.lng},
+                    map: map,
+                    animation: google.maps.Animation.DROP,
+                    title: coconut.name,
+                    icon: 'coconut_water.png'
+                });
+                markers.push(marker);
+            });
+
+            repositionUserMarker(userLat, userLng);
+            populateCoconutList();
+            $('#list').css('visibility', 'visible');
+        });
+    }
+
+    function sortCoconutsByDistance() {
+        // We need to sort the coconuts by location.
+        // We want the closest ones to show up at the top of the list.
+        coconuts.sort(function(a, b) {
+            a_distance = calculateDistance(userLat, userLng, a.lat, a.lng);
+            b_distance = calculateDistance(userLat, userLng, b.lat, b.lng);
+            return a_distance - b_distance;
+        });
+    }
+
+    function populateCoconutList() {
+        var list = $('#list > div.coconut-list');
+        list.empty();
+        coconuts.forEach(function(coconut) {
+            list.append('<div class="coconut" onmouseover="markerHover(this)" onmouseout="markerStop(this)">' + coconut.name + '</div>');
+        });
+    }
+
+
+    // INITIALIZATION & SETUP //
+
+    $(function(){
+        $.get('https://s3-us-west-2.amazonaws.com/wheremycoconut/coconuts.json', function(data) {
+            coconuts = JSON.parse(data);
+            initCoconuts();
+        });
+
+        [].slice.call( document.querySelectorAll( 'select.cs-select' ) ).forEach( function(el) {    
+            new SelectFx(el);
+        });
+
+        $("#coconut-selector").prop("selectedIndex", -1);
+    });
+
     </script>
   </body>
 </html>
