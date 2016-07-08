@@ -1,5 +1,5 @@
 <html>
-  <head>
+<head>
     <title>where my coconut</title>
 
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
@@ -73,12 +73,13 @@
             background-color: #967BB6;
         }
     </style>
-  </head>
-  
-  <body>
+</head>
+
+<body>
     <div id="map">
-        <div class="map-loader"></div>
+        <!-- <div class="map-loader"></div> -->
     </div>
+    <div id="directionsPanel" ></div>
     <div id="list">
         <div class="coconut-title">where my coconut</div>
         <div></div>
@@ -87,42 +88,49 @@
 
     <script>
 
-    $(function(){
-        $.get('https://s3-us-west-2.amazonaws.com/wheremycoconut/coconuts.json', function(data) {
-            coconuts = JSON.parse(data);
-            if (window.mapLoaded) {
+        $(function(){
+            $.get('https://s3-us-west-2.amazonaws.com/wheremycoconut/coconuts.json', function(data) {
+                coconuts = JSON.parse(data);
+                if (window.mapLoaded) {
+                    initCoconuts();
+                } else {
+                    coconutsLoaded = true;
+                }
+            });
+        });
+
+        function okMap() {
+            if (window.coconutsLoaded) {
                 initCoconuts();
             } else {
-                coconutsLoaded = true;
+                mapLoaded = true;
             }
-        });
-    });
-
-    function okMap() {
-        if (window.coconutsLoaded) {
-            initCoconuts();
-        } else {
-            mapLoaded = true;
         }
-    }
 
-    function initCoconuts() {
-        getLocation(function(location) {
-            if (location.error) {
-                userLat = 47.644459;
-                userLng = -122.130185;
-            } else {
-                userLat = location.coords.latitude;
-                userLng = location.coords.longitude;
-            }
+        function initCoconuts() {
+            getLocation(function(location) {
+                if (location.error) {
+                    userLat = 47.644459;
+                    userLng = -122.130185;
+                } else {
+                    userLat = location.coords.latitude;
+                    userLng = location.coords.longitude;
+                }
 
-            var mapDiv = document.getElementById('map');
-            var map = new google.maps.Map(mapDiv, {
-                center: {lat: userLat, lng: userLng},
-                zoom: 16
-            });
+                directionsDisplay = new google.maps.DirectionsRenderer();
+                directionsService = new google.maps.DirectionsService();
+                
 
-            sortCoconuts();
+                mapDiv = document.getElementById('map');
+                map = new google.maps.Map(mapDiv, {
+                    center: {lat: userLat, lng: userLng},
+                    zoom: 16
+                });
+                
+                directionsDisplay.setMap(map);
+                directionsDisplay.setPanel(document.getElementById("directionsPanel"));
+
+                sortCoconuts();
 
             // MARKERS //
             markers = [];
@@ -148,17 +156,44 @@
 
             var list = $('#list').last();
             coconuts.forEach(function(coconut) {
-                list.append('<div class="coconut" onmouseover="markerHover(this)" onmouseout="markerStop(this)">' + coconut.name + '</div>');
+                list.append('<div class="coconut" onmouseover="markerHover(this)" onmouseout="markerStop(this)" onClick="showDirections(this)">' + coconut.name + '</div>');
             });
         });
-    }
+}
 
-    function sortCoconuts() {
-        coconuts = coconuts.sort(function(a, b) {
-            a_distance = calculateDistance(userLat, userLng, a.lat, a.lng);
-            b_distance = calculateDistance(userLat, userLng, b.lat, b.lng);
-            return a_distance - b_distance;
-        });
+function sortCoconuts() {
+    coconuts = coconuts.sort(function(a, b) {
+        a_distance = calculateDistance(userLat, userLng, a.lat, a.lng);
+        b_distance = calculateDistance(userLat, userLng, b.lat, b.lng);
+        return a_distance - b_distance;
+    });
+}
+
+function showDirections(div) {
+        //direction service api call to show a route from you to the marker on the map
+
+        if (markers) {
+            markers.forEach(function(marker) {
+                if (marker.title === div.textContent) {
+                    var start = new google.maps.LatLng(userLat, userLng);
+                    var end = marker.getPosition();
+                    var request = {
+                        origin:start,
+                        destination:end,
+                        travelMode: google.maps.TravelMode.DRIVING
+                    };
+                    //console.log(request);
+                    directionsService.route(request, function(response, status) {
+                        if (status == google.maps.DirectionsStatus.OK) {
+                          directionsDisplay.setDirections(response);
+                      }
+                  });
+
+
+
+                }
+            });
+        }
     }
 
     function markerHover(div) {
@@ -181,10 +216,10 @@
         }
     }
 
-    </script>
+</script>
 
-    <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCEpJbuCUVvJ9AI4ZgldILvGpWq5yf5pZ0&callback=okMap">
-    </script>
-  </body>
+<script async defer
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCEpJbuCUVvJ9AI4ZgldILvGpWq5yf5pZ0&callback=okMap">
+</script>
+</body>
 </html>
