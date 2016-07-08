@@ -17,12 +17,11 @@ function getCurrentLocation(callback) {
 }
 
 function getLocationUsingGoogleMaps(callback) {
-    jQuery.post("https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyBwxzwTENmcAmiLA3B85GVuTE2oJbGkh-4", function(data) {
+    jQuery.post("https://www.googleapis.com/geolocation/v1/geolocate?key=AIzaSyBwxzwTENmcAmiLA3B85GVuTE2oJbGkh-4", {considerIp: false}, function(data) {
         console.log('google maps data', data);
         callback({coords: {latitude: data.location.lat, longitude: data.location.lng}});
     })
     .fail(function(err) {
-        alert("Could not find your location");
         callback({error: 'Could not find user\'s location'});
     });
 };
