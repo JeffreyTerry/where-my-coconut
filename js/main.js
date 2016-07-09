@@ -48,7 +48,7 @@ function showDirections(div) {
                 var request = {
                     origin:start,
                     destination:end,
-                    travelMode: google.maps.TravelMode.DRIVING
+                    travelMode: google.maps.TravelMode.WALKING
                 };
                 //console.log(request);
                 directionsService.route(request, function(response, status) {
@@ -121,7 +121,7 @@ function initCoconuts() {
         
         // Set up google maps directions api //
 
-        directionsDisplay = new google.maps.DirectionsRenderer();
+        directionsDisplay = new google.maps.DirectionsRenderer({suppressMarkers: true});
         directionsService = new google.maps.DirectionsService();
         
         directionsDisplay.setMap(map);

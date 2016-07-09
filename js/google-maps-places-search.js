@@ -30,14 +30,5 @@ function initSearchBox() {
     $('#pac-input').val(place.name);
 
     updateCurrentLocation(place.geometry.location.lat(), place.geometry.location.lng());
-
-    var bounds = new google.maps.LatLngBounds();
-    if (place.geometry.viewport) {
-      // Only geocodes have viewport.
-      bounds.union(place.geometry.viewport);
-    } else {
-      bounds.extend(place.geometry.location);
-    }
-    map.fitBounds(bounds);
   });
 }
