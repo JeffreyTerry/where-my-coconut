@@ -1,37 +1,3 @@
-// LOCATION SEARCH //
-
-function searchOnEnterKey(element) {
-    // Check that this event was triggered by the "enter" key.
-    // Also check that the map has loaded.
-    if (event.keyCode == 13 && $('.map-loader').length == 0) {
-        var search_term = toTitleCase(element.value);
-        if (search_term.search(/^\s*building\s*\d+\s*$/i) != -1) {
-            search_term = "Microsoft " + search_term;
-        } else if (search_term.search(/^\s*\d+\s*$/) != -1) {
-            search_term = "Microsoft Building " + search_term;
-        } else if (search_term.search(/^\s*redwest\s*[a-z]\s*$/i) != -1) {
-            search_term = "Microsoft " + search_term;
-        } else if (search_term.search(/^\s*redwoods\s*[a-z]\s*$/i) != -1) {
-            search_term = "Microsoft " + search_term;
-        } else if (search_term.search(/^\s*studio\s*[a-z]\s*$/i) != -1) {
-            search_term = "Microsoft " + search_term;
-        } else if (search_term.search(/^\s*[a-z]\s*$/i) != -1) {
-            search_term = "Microsoft Studio " + search_term;
-        } else if (search_term.search(/^\s*the commons\s*$/i) != -1) {
-            search_term = "Microsoft " + search_term;
-        } else if (search_term.search(/^\s*commons\s*$/i) != -1) {
-            search_term = "Microsoft " + search_term;
-        } else if (search_term.search(/^\s*transit center\s*$/i) != -1) {
-            search_term = "Overlake " + search_term;
-        } else if (search_term.search(/^\s*otc\s*$/i) != -1) {
-            search_term = "Overlake Transit Center";
-        }
-        element.value = search_term;
-        searchForLocationAndSetToCurrent(search_term);
-    }
-}
-
-
 // DIRECTION SEARCH //
 
 function showDirections(div) {
@@ -84,8 +50,24 @@ function markerStop(div) {
     }
 }
 
+function bobArrowUpAndDown() {
+   $('#map-overlay-arrow').animate({top:'+=12'}, 500);
+   $('#map-overlay-arrow').animate({top:'-=12'}, 500, bobArrowUpAndDown);
+   $('#map-overlay-instructions').animate({top:'+=12'}, 500);
+   $('#map-overlay-instructions').animate({top:'-=12'}, 500, bobArrowUpAndDown);
+}
+
 function grayOutMap() {
-    $('#map').append("<div id='map-overlay'></div>");
+    $('#map > div').append("<div id='map-overlay'></div>");
+    $('#map > div').append("<img id='map-overlay-arrow' src='imgs/up-arrow.png'>");
+    $('#map > div').append("<div id='map-overlay-instructions'>enter your location</div>");
+    bobArrowUpAndDown();
+}
+
+function removeGrayOutFromMap() {
+    $('#map > div > #map-overlay').remove();
+    $('#map > div > #map-overlay-arrow').remove();
+    $('#map > div > #map-overlay-instructions').remove();
 }
 
 
@@ -97,9 +79,15 @@ function initCoconuts() {
             // The center of the Microsoft Campus
             userLat = DEFAULT_CENTER.lat;
             userLng = DEFAULT_CENTER.lng;
+
+            $('#map').css({width: '100%'});
         } else {
             userLat = location.coords.latitude;
             userLng = location.coords.longitude;
+
+            if ($(window).width() >= 1000) {
+                $('#list').css({width: '292px'});
+            }
         }
 
         // Load the map, then initialize the search box //
@@ -110,44 +98,60 @@ function initCoconuts() {
             mapTypeId: google.maps.MapTypeId.ROADMAP
         });
 
+        // When the search box first loads, it looks super dank.
+        // So we hide it until the map populates.s
+        // When the search box moves inside the map, it becomes less dank.
+        $('#map').arrive('#pac-input', function() {
+            $('#pac-input').css({'display': 'block'});
+            $(document).unbindArrive('#map');
+
+            // If we couldn't automatically find the user's location, we ask them for it.
+            if (location.error) {
+                grayOutMap();
+                $('#pac-input').ready(function() {
+                    $('#pac-input').focus();
+                });
+            }
+        });
+
         initSearchBox();
 
-        // If we couldn't automatically find the user's location, let's ask them for it.
-        // if (location.error) {  TODO
-        //     setTimeout(function() {
-        //         grayOutMap();
-        //     }, 1000);
-        // }
-        
         // Set up google maps directions api //
 
         directionsDisplay = new google.maps.DirectionsRenderer({suppressMarkers: true});
         directionsService = new google.maps.DirectionsService();
         
         directionsDisplay.setMap(map);
-        directionsDisplay.setPanel(document.getElementById("directionsPanel"));
+        directionsDisplay.setPanel(document.getElementById('directionsPanel'));
 
         // Sort the coconuts //
         sortCoconutsByDistance();
+        
+        // If we were able to automatically find the user's location, we can reposition the map now and populate the list.
+        if (!location.error) {
+            sortCoconutsByDistance();
+            populateCoconutList();
 
-        // Place markers //
-        markers = [];
-        coconuts.forEach(function(coconut) {
-            var marker = new google.maps.Marker({
-                position: {'lat': coconut.lat, 'lng': coconut.lng},
-                map: map,
-                animation: google.maps.Animation.DROP,
-                title: coconut.name,
-                icon: 'imgs/coconut_water.png'
-            });
-            markers.push(marker);
+            repositionCurrentLocationMarker();
+            panToCurrentLocation();
+            
+            placeCoconutMarkers();
+        }
+    });
+}
+
+function placeCoconutMarkers() {
+    // Place markers //
+    markers = [];
+    coconuts.forEach(function(coconut) {
+        var marker = new google.maps.Marker({
+            position: {'lat': coconut.lat, 'lng': coconut.lng},
+            map: map,
+            animation: google.maps.Animation.DROP,
+            title: coconut.name,
+            icon: 'imgs/coconut_water.png'
         });
-
-        repositionCurrentLocationMarker(userLat, userLng);
-
-        // Set up the list of coconuts
-        populateCoconutList();
-        $('#list').css('visibility', 'visible');
+        markers.push(marker);
     });
 }
 
@@ -162,6 +166,7 @@ function sortCoconutsByDistance() {
 }
 
 function populateCoconutList() {
+    $('#list').css('visibility', 'visible');
     var list = $('#list > div.coconut-list');
     list.empty();
     coconuts.forEach(function(coconut) {
@@ -173,14 +178,26 @@ function populateCoconutList() {
 // INITIALIZATION & SETUP //
 
 $(function(){
+    // Set up auto-resizing for the map and list
+    $(window).resize(function() {
+        // Only resize the map & list if the user has already finished entering their location.
+        if ($('#map-overlay').length == 0) {
+            // Size differently on mobile than on desktop
+            if ($(window).width() < 1000) {
+                // Mobile
+                $('#map').css({width: ($(window).width() - 16) + 'px'});
+                $('#list').css({width: ($(window).width() - 16) + 'px'});
+            } else {
+                // Desktop
+                $('#map').css({width: ($(window).width() - 316) + 'px'});
+                $('#list').css({width: '292px'});
+            }
+        }
+    });
+
+    // GET THE COCONUTS! NOWNOWNOW!
     $.get('https://s3-us-west-2.amazonaws.com/wheremycoconut/coconuts.json', function(data) {
         coconuts = JSON.parse(data);
         initCoconuts();
     });
-
-    [].slice.call( document.querySelectorAll( 'select.cs-select' ) ).forEach( function(el) {    
-        new SelectFx(el);
-    });
-
-    $("#coconut-selector").prop("selectedIndex", -1);
 });

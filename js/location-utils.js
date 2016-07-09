@@ -1,10 +1,10 @@
 // CONSTANTS //
-var DEFAULT_CENTER = {lat: 47.644459, lng: -122.130185};
+var DEFAULT_CENTER = {lat: 47.640588, lng: -122.130857};
 
 // GEOLOCATION //
 
 function getCurrentLocation(callback) {
-    if (navigator.geolocation) {
+    if (false && navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(callback, function() {
             // On failure, do this
             getLocationUsingGoogleMaps(callback)
@@ -31,31 +31,23 @@ function getLocationUsingGoogleMaps(callback) {
     });
 };
 
-function updateCurrentLocation(lat, lng) {
-    userLat = lat;
-    userLng = lng;
-
-    repositionCurrentLocationMarker(userLat, userLng);
-
+function panToCurrentLocation() {
     // Check to see if we're showing directions to a coconut right now
     if (window.destination_coconut) {
         showDirections();
     } else {
         map.panTo(new google.maps.LatLng(userLat, userLng));
     }
-
-    sortCoconutsByDistance();
-    populateCoconutList();
 }
 
-function repositionCurrentLocationMarker(lat, lng) {
+function repositionCurrentLocationMarker() {
     // Check to see if we need to remove the old user marker.
     if (window.user_marker) {
         user_marker.setMap(null);
     }
 
     user_marker = new google.maps.Marker({
-        position: {'lat': lat, 'lng': lng},
+        position: {'lat': userLat, 'lng': userLng},
         map: map,
         title: 'My Location',
         icon: 'imgs/blue_dot.png'
