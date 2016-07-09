@@ -8,6 +8,7 @@ body {
     font-family: segoelight;
 }
 
+
 /* POSITIONING */
 
 /* If phone or fablet */
@@ -34,7 +35,7 @@ body {
     }
     #list {
         height: 100%;
-        width: 292px;
+        width: 0;
         position: absolute;
         top: 0;
         right: 8px;
@@ -47,13 +48,11 @@ body {
     font-size: 32px;
     cursor: default;
 }
-.location-title {
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
 .coconut-title {
     margin-top: 15px;
     margin-bottom: 10px;
+    white-space: nowrap;
+    overflow-x: hidden;
 }
 .coconut {
     text-align: center;
@@ -64,6 +63,8 @@ body {
     background-color: #E6E6FA;
     cursor: pointer;
     font-size: 20px;
+    white-space: nowrap;
+    overflow-x: hidden;
 }
 .coconut:hover {
     color: white;
@@ -77,6 +78,9 @@ body {
 
 #pac-input {
     display: none;
+    position: absolute;
+    z-index: 2 !important;
+    left: 113px !important;
 }
 
 #map-overlay {
@@ -87,4 +91,26 @@ body {
     height: 100%;
     top: 0;
     left: 0;
+    z-index: 1;
+}
+
+#map-overlay-arrow {
+    position: absolute;
+    z-index: 2;
+    left: 200px;
+    top: 60px;
+    font-size: 80px;
+    font-weight: 800;
+    font-family: sans-serif;
+    cursor: default;
+}
+
+#map-overlay-instructions {
+    position: absolute;
+    z-index: 2;
+    left: 256px;
+    top: 54px;
+    font-size: 40px;
+    font-family: segoelight;
+    cursor: default;
 }
