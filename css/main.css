@@ -31,7 +31,8 @@ body {
 @media screen and (min-width: 1000px) {
     #map {
         height: 100%;
-        width: calc(100% - 300px);
+        /*width: calc(100% - 300px);*/
+        width: 100%;
     }
     #list {
         height: 100%;

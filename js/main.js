@@ -79,13 +79,12 @@ function initCoconuts() {
             // The center of the Microsoft Campus
             userLat = DEFAULT_CENTER.lat;
             userLng = DEFAULT_CENTER.lng;
-
-            $('#map').css({width: '100%'});
         } else {
             userLat = location.coords.latitude;
             userLng = location.coords.longitude;
 
             if ($(window).width() >= 1000) {
+                $('#map').css({width: ($(window).width() - 316) + 'px'});
                 $('#list').css({width: '292px'});
             }
         }
@@ -99,8 +98,8 @@ function initCoconuts() {
         });
 
         // When the search box first loads, it looks super dank.
-        // So we hide it until the map populates.s
-        // When the search box moves inside the map, it becomes less dank.
+        // So we hide it until the map populates.
+        // Once google puts the search box inside the map, the box becomes less dank.
         $('#map').arrive('#pac-input', function() {
             $('#pac-input').css({'display': 'block'});
             $(document).unbindArrive('#map');
