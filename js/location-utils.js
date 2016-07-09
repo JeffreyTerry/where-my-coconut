@@ -4,7 +4,7 @@ var DEFAULT_CENTER = {lat: 47.640588, lng: -122.130857};
 // GEOLOCATION //
 
 function getCurrentLocation(callback) {
-    if (false && navigator.geolocation) {
+    if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(callback, function() {
             // On failure, do this
             getLocationUsingGoogleMaps(callback)
