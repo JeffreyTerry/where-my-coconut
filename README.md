@@ -1,2 +1,2 @@
-# where-my-coconut
+# //coconut
 Coconuts. At your fingertips.
