@@ -38,11 +38,8 @@ function initSearchBox() {
         if ($('#map-overlay').length > 0) {
             removeGrayOutFromMap();
             placeCoconutMarkers();
-        }
-
-        // This code also only runs if we couldn't automatically find the user's location and if they just finished specifying it themselves.
-        // If necessary (i.e. if we're in desktop mode), swoosh the coconut list into the window from the right.
-        if ($('#list').width() == 0) {
+            
+            // If necessary (i.e. if we're in desktop mode), swoosh the coconut list into the window from the right.
             var animationTime = 350;
 
             $('#list').animate({width: '292px'}, animationTime);
