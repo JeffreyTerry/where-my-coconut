@@ -121,7 +121,6 @@ function initCoconuts() {
         directionsService = new google.maps.DirectionsService();
         
         directionsDisplay.setMap(map);
-        directionsDisplay.setPanel(document.getElementById('directionsPanel'));
 
         // Sort the coconuts //
         sortCoconutsByDistance();
