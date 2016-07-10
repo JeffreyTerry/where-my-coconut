@@ -44,6 +44,10 @@ body {
 }
 
 /* STYLE */
+#list {
+    overflow: scroll;
+}
+
 #list .title {
     text-align: center;
     font-size: 32px;
