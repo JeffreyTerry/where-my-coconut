@@ -12,11 +12,10 @@ function showDirections(div) {
                 var start = new google.maps.LatLng(userLat, userLng);
                 var end = marker.getPosition();
                 var request = {
-                    origin:start,
-                    destination:end,
+                    origin: start,
+                    destination: end,
                     travelMode: google.maps.TravelMode.WALKING
                 };
-                //console.log(request);
                 directionsService.route(request, function(response, status) {
                     if (status == google.maps.DirectionsStatus.OK) {
                         directionsDisplay.setDirections(response);
@@ -51,10 +50,18 @@ function markerStop(div) {
 }
 
 function bobArrowUpAndDown() {
-   $('#map-overlay-arrow').animate({top:'+=12'}, 500);
-   $('#map-overlay-arrow').animate({top:'-=12'}, 500, bobArrowUpAndDown);
-   $('#map-overlay-instructions').animate({top:'+=12'}, 500);
-   $('#map-overlay-instructions').animate({top:'-=12'}, 500, bobArrowUpAndDown);
+    $('#map-overlay-arrow').animate({
+        top: '+=12'
+    }, 500);
+    $('#map-overlay-arrow').animate({
+        top: '-=12'
+    }, 500, bobArrowUpAndDown);
+    $('#map-overlay-instructions').animate({
+        top: '+=12'
+    }, 500);
+    $('#map-overlay-instructions').animate({
+        top: '-=12'
+    }, 500, bobArrowUpAndDown);
 }
 
 function grayOutMap() {
@@ -84,15 +91,22 @@ function initCoconuts() {
             userLng = location.coords.longitude;
 
             if ($(window).width() >= 1000) {
-                $('#map').css({width: ($(window).width() - 316) + 'px'});
-                $('#list').css({width: '292px'});
+                $('#map').css({
+                    width: ($(window).width() - 316) + 'px'
+                });
+                $('#list').css({
+                    width: '292px'
+                });
             }
         }
 
         // Load the map, then initialize the search box //
         var mapDiv = document.getElementById('map');
         map = new google.maps.Map(mapDiv, {
-            center: {lat: userLat, lng: userLng},
+            center: {
+                lat: userLat,
+                lng: userLng
+            },
             zoom: 16,
             mapTypeId: google.maps.MapTypeId.ROADMAP
         });
@@ -101,7 +115,9 @@ function initCoconuts() {
         // So we hide it until the map populates.
         // Once google puts the search box inside the map, the box becomes less dank.
         $('#map').arrive('#pac-input', function() {
-            $('#pac-input').css({'display': 'block'});
+            $('#pac-input').css({
+                'display': 'block'
+            });
             $(document).unbindArrive('#map');
 
             // If we couldn't automatically find the user's location, we ask them for it.
@@ -117,14 +133,16 @@ function initCoconuts() {
 
         // Set up google maps directions api //
 
-        directionsDisplay = new google.maps.DirectionsRenderer({suppressMarkers: true});
+        directionsDisplay = new google.maps.DirectionsRenderer({
+            suppressMarkers: true
+        });
         directionsService = new google.maps.DirectionsService();
-        
+
         directionsDisplay.setMap(map);
 
         // Sort the coconuts //
         sortCoconutsByDistance();
-        
+
         // If we were able to automatically find the user's location, we can reposition the map now and populate the list.
         if (!location.error) {
             sortCoconutsByDistance();
@@ -132,24 +150,47 @@ function initCoconuts() {
 
             repositionCurrentLocationMarker();
             panToCurrentLocation();
-            
+
             placeCoconutMarkers();
         }
     });
 }
 
-function placeCoconutMarkers() {
+function placeCoconutMarkers() { //also adds marker listeners 
     // Place markers //
     markers = [];
     coconuts.forEach(function(coconut) {
         var marker = new google.maps.Marker({
-            position: {'lat': coconut.lat, 'lng': coconut.lng},
+            position: {
+                'lat': coconut.lat,
+                'lng': coconut.lng
+            },
             map: map,
             animation: google.maps.Animation.DROP,
             title: coconut.name,
             icon: 'imgs/coconut_water.png'
         });
         markers.push(marker);
+        marker.addListener('click', function() {
+            //map.setZoom(18);
+            //map.setCenter(marker.getPosition());
+            var start = new google.maps.LatLng(userLat, userLng);
+            var end = marker.getPosition();
+            var request = {
+                origin: start,
+                destination: end,
+                travelMode: google.maps.TravelMode.WALKING
+            };
+            directionsService.route(request, function(response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(response);
+                }
+            });
+            // var infowindow = new google.maps.InfoWindow({
+            //     content: data
+            // });
+            //infowindow.open(map, marker);
+        });
     });
 }
 
@@ -175,7 +216,7 @@ function populateCoconutList() {
 
 // INITIALIZATION & SETUP //
 
-$(function(){
+$(function() {
     // Set up auto-resizing for the map and list
     $(window).resize(function() {
         // Only resize the map & list if the user has already finished entering their location.
@@ -183,12 +224,20 @@ $(function(){
             // Size differently on mobile than on desktop
             if ($(window).width() < 1000) {
                 // Mobile
-                $('#map').css({width: ($(window).width() - 16) + 'px'});
-                $('#list').css({width: ($(window).width() - 16) + 'px'});
+                $('#map').css({
+                    width: ($(window).width() - 16) + 'px'
+                });
+                $('#list').css({
+                    width: ($(window).width() - 16) + 'px'
+                });
             } else {
                 // Desktop
-                $('#map').css({width: ($(window).width() - 316) + 'px'});
-                $('#list').css({width: '292px'});
+                $('#map').css({
+                    width: ($(window).width() - 316) + 'px'
+                });
+                $('#list').css({
+                    width: '292px'
+                });
             }
         }
     });
