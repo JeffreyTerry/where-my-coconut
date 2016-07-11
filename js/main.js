@@ -243,7 +243,7 @@ $(function() {
     });
 
     // GET THE COCONUTS! NOWNOWNOW!
-    $.get('https://s3-us-west-2.amazonaws.com/wheremycoconut/drink-information.json', function(data) {
+    $.get('https://jeffreyterry.github.io/where-my-coconut/drink-information.json', function(data) {
         drinks = JSON.parse(data);
         coconuts = drinks.filter(function(drink) {
             return drink.type == 'coconut';
