@@ -57,6 +57,9 @@ function initSearchBox() {
                 repositionCurrentLocationMarker();
                 panToCurrentLocation();
             }
+        } else {
+            repositionCurrentLocationMarker();
+            panToCurrentLocation();
         }
     });
 }
