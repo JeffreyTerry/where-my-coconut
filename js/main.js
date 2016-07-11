@@ -146,7 +146,7 @@ function placeCoconutMarkers() {
             position: {'lat': coconut.lat, 'lng': coconut.lng},
             map: map,
             animation: google.maps.Animation.DROP,
-            title: coconut.name,
+            title: coconut.building,
             icon: 'imgs/coconut_water.png'
         });
         markers.push(marker);
@@ -168,7 +168,7 @@ function populateCoconutList() {
     var list = $('#list > div.coconut-list');
     list.empty();
     coconuts.forEach(function(coconut) {
-        list.append('<div class="coconut" onmouseover="markerHover(this)" onmouseout="markerStop(this)" onClick="showDirections(this)">' + coconut.name + '</div>');
+        list.append('<div class="coconut" onmouseover="markerHover(this)" onmouseout="markerStop(this)" onClick="showDirections(this)">' + coconut.building + '</div>');
     });
 }
 
@@ -194,8 +194,14 @@ $(function(){
     });
 
     // GET THE COCONUTS! NOWNOWNOW!
-    $.get('https://s3-us-west-2.amazonaws.com/wheremycoconut/coconuts.json', function(data) {
-        coconuts = JSON.parse(data);
+    $.get('https://s3-us-west-2.amazonaws.com/wheremycoconut/drink-information.json', function(data) {
+        drinks = JSON.parse(data);
+        coconuts = drinks.filter(function(drink) {
+            return drink.type == 'coconut';
+        });
+        lattes = drinks.filter(function(drink) {
+            return drink.type == 'latte';
+        });
         initCoconuts();
     });
 });
