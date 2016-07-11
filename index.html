@@ -21,16 +21,15 @@
     <div id="map">
         <div class="map-loader"></div>
     </div>
-    <div id="directionsPanel" ></div>
-    <div id="list">
-        <!-- <div class="title location-title">my location</div> -->
-        <!-- <div class="input-box my-location-input">
-            <input type="text" placeholder="choose current location" onkeydown="searchOnEnterKey(this)"/>
-        </div> -->
-        <div class="title coconut-title">where my coconut</div>
-        <div class="coconut-list"></div>
+    <div id="details-panel">
+        <div id="list-box">
+            <div id="drink-title" class="title">where my coconut</div>
+            <div id="drink-list"></div>
+        </div>
+        <div id="bottom-box">
+            <div id="report-a-drink" onclick="reportBug()">add a coconut</div>
+        </div>
     </div>
-
 
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBwxzwTENmcAmiLA3B85GVuTE2oJbGkh-4&libraries=places"></script>
     <script type="text/javascript" src="js/main.js"></script>

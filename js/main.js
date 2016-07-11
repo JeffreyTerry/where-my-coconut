@@ -1,3 +1,12 @@
+// REPORTING BUGS //
+function reportBug() {
+    window.open(
+        // 'mailto:t-jeterr@microsoft.com',
+        'http://goo.gl/forms/t4cn2S4TLi9Yhw3y1',
+        '_blank'
+    );
+}
+
 // DIRECTION SEARCH //
 
 function showDirections(div) {
@@ -90,11 +99,11 @@ function initCoconuts() {
             userLat = location.coords.latitude;
             userLng = location.coords.longitude;
 
-            if ($(window).width() >= 1000) {
+            if (!isMobile()) {
                 $('#map').css({
                     width: ($(window).width() - 316) + 'px'
                 });
-                $('#list').css({
+                $('#details-panel').css({
                     width: '292px'
                 });
             }
@@ -147,6 +156,7 @@ function initCoconuts() {
         if (!location.error) {
             sortCoconutsByDistance();
             populateCoconutList();
+            $('#details-panel').css('visibility', 'visible');
 
             repositionCurrentLocationMarker();
             panToCurrentLocation();
@@ -205,11 +215,10 @@ function sortCoconutsByDistance() {
 }
 
 function populateCoconutList() {
-    $('#list').css('visibility', 'visible');
-    var list = $('#list > div.coconut-list');
+    var list = $('#drink-list');
     list.empty();
     coconuts.forEach(function(coconut) {
-        list.append('<div class="coconut" onmouseover="markerHover(this)" onmouseout="markerStop(this)" onClick="showDirections(this)">' + coconut.building + '</div>');
+        list.append('<div class="drink-list-item" onmouseover="markerHover(this)" onmouseout="markerStop(this)" onClick="showDirections(this)">' + coconut.building + '</div>');
     });
 }
 
@@ -222,20 +231,18 @@ $(function() {
         // Only resize the map & list if the user has already finished entering their location.
         if ($('#map-overlay').length == 0) {
             // Size differently on mobile than on desktop
-            if ($(window).width() < 1000) {
-                // Mobile
+            if (isMobile()) {
                 $('#map').css({
                     width: ($(window).width() - 16) + 'px'
                 });
-                $('#list').css({
+                $('#details-panel').css({
                     width: ($(window).width() - 16) + 'px'
                 });
             } else {
-                // Desktop
                 $('#map').css({
                     width: ($(window).width() - 316) + 'px'
                 });
-                $('#list').css({
+                $('#details-panel').css({
                     width: '292px'
                 });
             }
