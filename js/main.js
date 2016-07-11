@@ -1,10 +1,16 @@
-// REPORTING BUGS //
-function reportBug() {
-    window.open(
-        // 'mailto:t-jeterr@microsoft.com',
-        'http://goo.gl/forms/t4cn2S4TLi9Yhw3y1',
-        '_blank'
-    );
+// ADDING DRINKS //
+function addDrink(el) {
+    if (el.textContent.includes('coconut')) {
+        window.open(
+            'http://goo.gl/forms/t4cn2S4TLi9Yhw3y1',
+            '_blank'
+        );
+    } else if (el.textContent.includes('latte')) {
+        window.open(
+            '',
+            '_blank'
+        );
+    } 
 }
 
 // DIRECTION SEARCH //
@@ -12,7 +18,7 @@ function reportBug() {
 function showDirections(div) {
     //direction service api call to show a route from you to the marker on the map
     if (div) {
-        destination_coconut = div.textContent;
+        destination_coconut = $(div).clone().children().remove().end().text();
     }
 
     if (markers) {
@@ -38,10 +44,21 @@ function showDirections(div) {
 
 // UI EFFECTS //
 
+function showRightArrow(div) {
+    $(div).find('.distance').css({'display': 'none'});
+    $(div).find('.arrow').css({'display': 'block'});
+}
+
+function hideRightArrow(div) {
+    $(div).find('.distance').css({'display': 'block'});
+    $(div).find('.arrow').css({'display': 'none'});
+}
+
 function markerHover(div) {
     if (markers) {
+        var building_name = $(div).clone().children().remove().end().text();
         markers.forEach(function(marker) {
-            if (marker.title === div.textContent) {
+            if (marker.title == building_name) {
                 marker.setAnimation(google.maps.Animation.BOUNCE);
             }
         });
@@ -50,8 +67,9 @@ function markerHover(div) {
 
 function markerStop(div) {
     if (markers) {
+        var building_name = $(div).clone().children().remove().end().text();
         markers.forEach(function(marker) {
-            if (marker.title === div.textContent) {
+            if (marker.title == building_name) {
                 marker.setAnimation(null);
             }
         });
@@ -218,7 +236,14 @@ function populateCoconutList() {
     var list = $('#drink-list');
     list.empty();
     coconuts.forEach(function(coconut) {
-        list.append('<div class="drink-list-item" onmouseover="markerHover(this)" onmouseout="markerStop(this)" onClick="showDirections(this)">' + coconut.building + '</div>');
+        list.append('<div class="drink-list-item" onmouseover="markerHover(this);showRightArrow(this)" onmouseout="markerStop(this);hideRightArrow(this)" onClick="showDirections(this)">' + coconut.building + '</div>');
+        var current_list_item = list.children().last('.drink-list-item');
+        
+        var current_distance = calculateDistance(userLat, userLng, coconut.lat, coconut.lng);
+        current_distance = Math.round(current_distance / 100) / 10;  // Round to nearest tenth.
+        current_list_item.prepend('<div class="distance">' + current_distance + ' km</div>');
+
+        current_list_item.prepend('<img class="arrow" src="imgs/right-arrow.png">');
     });
 }
 

@@ -77,8 +77,8 @@ body {
     text-align: center;
     margin-top: 2px;
     margin-bottom: 2px;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding-top: 7px;
+    padding-bottom: 9px;
     background-color: #E6E6FA;
     cursor: pointer;
     font-size: 20px;
@@ -87,19 +87,36 @@ body {
     color: white;
     background-color: #967BB6;
 }
+.drink-list-item > .distance {
+    position: absolute;
+    right: 7px;
+    font-size: 15px;
+    padding-top: 5px;
+    color: #888;
+}
+.drink-list-item:hover > .distance {
+    color: white;
+}
+.drink-list-item > .arrow {
+    position: absolute;
+    right: 16px;
+    padding-top: 5px;
+    display: none;
+}
 #report-a-drink {
     text-align: center;
-    /*background-color: #DEF9C5;*/
+    background-color: #DEF9C5;
     /*background-color: #FFF7A8;*/
-    background-color: #F9C5D3;
+    /*background-color: #F9C5D3;*/
     cursor: pointer;
     font-size: 20px;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding-top: 7px;
+    padding-bottom: 9px;
 }
 #report-a-drink:hover {
     color: white;
-    background-color: #F6002C;
+    background-color: #65CF00;
+    /*background-color: #F6002C;*/
 }
 
 /* EFFECTS */
