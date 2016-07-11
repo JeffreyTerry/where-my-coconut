@@ -33,27 +33,30 @@ function initSearchBox() {
         // We need the current location globals to be set in order for 'sortCoconutsByDistance' to work, so don't move this up.
         sortCoconutsByDistance();
         populateCoconutList();
+        $('#details-panel').css('visibility', 'visible');
 
         // This code only runs if we couldn't automatically find the user's location and if they just finished specifying it themselves.
         if ($('#map-overlay').length > 0) {
             removeGrayOutFromMap();
             placeCoconutMarkers();
             
-            // If necessary (i.e. if we're in desktop mode), swoosh the coconut list into the window from the right.
-            var animationTime = 350;
+            if (!isMobile()) {
+                // If necessary (i.e. if we're in desktop mode), swoosh the coconut list into the window from the right.
+                var animationTime = 350;
 
-            $('#list').animate({width: '292px'}, animationTime);
-            $('#map').animate({width: ($(window).width() - 316) + 'px'}, animationTime);
+                $('#details-panel').animate({width: '292px'}, animationTime);
+                $('#map').animate({width: ($(window).width() - 316) + 'px'}, animationTime);
 
-            // We need to wait for the map to resize before we pan to its center.
-            setTimeout(function() {
-                google.maps.event.trigger(map, 'resize');
+                // We need to wait for the map to resize before we pan to its center.
+                setTimeout(function() {
+                    google.maps.event.trigger(map, 'resize');
+                    repositionCurrentLocationMarker();
+                    panToCurrentLocation();
+                }, animationTime);
+            } else {
                 repositionCurrentLocationMarker();
                 panToCurrentLocation();
-            }, animationTime);
-        } else {
-            repositionCurrentLocationMarker();
-            panToCurrentLocation();
+            }
         }
     });
 }
