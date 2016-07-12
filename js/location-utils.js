@@ -33,7 +33,7 @@ function getLocationUsingGoogleMaps(callback) {
 
 function panToCurrentLocation() {
     // Check to see if we're showing directions to a coconut right now
-    if (window.destination_coconut) {
+    if (window.destination_building) {
         showDirections();
     } else {
         map.panTo(new google.maps.LatLng(userLat, userLng));

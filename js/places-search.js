@@ -30,18 +30,18 @@ function initSearchBox() {
         userLat = place.geometry.location.lat();
         userLng = place.geometry.location.lng();
 
-        // We need the current location globals to be set in order for 'sortCoconutsByDistance' to work, so don't move this up.
-        sortCoconutsByDistance();
-        populateCoconutList();
+        // We need the current location globals to be set in order for 'sortDrinksByDistance' to work, so don't move this up.
+        sortDrinksByDistance();
+        populateDrinkList();
         $('#details-panel').css('visibility', 'visible');
 
         // This code only runs if we couldn't automatically find the user's location and if they just finished specifying it themselves.
         if ($('#map-overlay').length > 0) {
             removeGrayOutFromMap();
-            placeCoconutMarkers();
+            placeDrinkMarkers();
             
             if (!isMobile()) {
-                // If necessary (i.e. if we're in desktop mode), swoosh the coconut list into the window from the right.
+                // If necessary (i.e. if we're in desktop mode), swoosh the drink list into the window from the right.
                 var animationTime = 350;
 
                 $('#details-panel').animate({width: '292px'}, animationTime);
