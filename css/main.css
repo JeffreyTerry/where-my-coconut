@@ -25,6 +25,10 @@ body {
         right: 8px;
         left: 8px;
     }
+    #add-a-drink-box {
+        margin-top: 6px;
+        margin-bottom: 8px;
+    }
 }
 
 /* If desktop or big tablet */
@@ -42,14 +46,26 @@ body {
         bottom: 8px;
         right: 8px;
     }
-    #list-box {
+    #drink-selector-box {
         position: absolute;
         top: 0;
         right: 0;
         left: 0;
+    }
+    #drink-list-title {
+        position: absolute;
+        top: 60px;
+        right: 0;
+        left: 0;
+    }
+    #list-box {
+        position: absolute;
+        top: 113px;
+        right: 0;
+        left: 0;
         bottom: 51px;
     }
-    #bottom-box {
+    #add-a-drink-box {
         position: absolute;
         right: 0;
         left: 0;
@@ -66,8 +82,7 @@ body {
     white-space: nowrap;
     overflow-x: hidden;
 }
-#drink-title {
-    margin-top: 15px;
+#drink-list-title {
     margin-bottom: 10px;
     text-align: center;
     font-size: 32px;
@@ -103,7 +118,7 @@ body {
     padding-top: 5px;
     display: none;
 }
-#report-a-drink {
+#add-a-drink {
     text-align: center;
     background-color: #DEF9C5;
     /*background-color: #FFF7A8;*/
@@ -113,10 +128,23 @@ body {
     padding-top: 7px;
     padding-bottom: 9px;
 }
-#report-a-drink:hover {
+#add-a-drink:hover {
     color: white;
     background-color: #65CF00;
     /*background-color: #F6002C;*/
+}
+#drink-selector-list {
+    width: 205px;
+    margin-right: auto;
+    margin-left: auto;
+}
+#drink-selector-list > img {
+    cursor: pointer;
+    border-bottom: 4px solid white;
+}
+#drink-selector-list > img:hover {
+    /*background-color: #87CEFA;*/
+    border-bottom: 4px solid #87CEFA;
 }
 
 /* EFFECTS */

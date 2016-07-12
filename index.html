@@ -22,12 +22,20 @@
         <div class="map-loader"></div>
     </div>
     <div id="details-panel">
+        <div id="drink-selector-box">
+            <div id="drink-selector-list">
+                <img src="imgs/coconut_icon.png" title="Coconut Water" onclick="setDrinkType('coconut')">
+                <img src="imgs/vitamin_icon.png" title="Vitamin Water" onclick="setDrinkType('vitamin')">
+                <img src="imgs/almond_icon.png" title="Almond Milk" onclick="setDrinkType('almond')">
+                <img src="imgs/latte_icon.png" title="Lattes" onclick="setDrinkType('latte')">
+            </div>
+        </div>
+        <div id="drink-list-title" class="title">where my coconut</div>
         <div id="list-box">
-            <div id="drink-title" class="title">where my coconut</div>
             <div id="drink-list"></div>
         </div>
-        <div id="bottom-box">
-            <div id="report-a-drink" onclick="addDrink(this)">add a coconut</div>
+        <div id="add-a-drink-box">
+            <div id="add-a-drink" onclick="addDrink(this)">add a coconut</div>
         </div>
     </div>
 

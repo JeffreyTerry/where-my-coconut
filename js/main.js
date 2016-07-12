@@ -5,9 +5,19 @@ function addDrink(el) {
             'http://goo.gl/forms/t4cn2S4TLi9Yhw3y1',
             '_blank'
         );
+    } else if (el.textContent.includes('vitamin')) {
+        window.open(
+            'http://goo.gl/forms/8gB3O0hlGlo9LrSF2',
+            '_blank'
+        );
+    } else if (el.textContent.includes('almond')) {
+        window.open(
+            'http://goo.gl/forms/ms4T2wVKsIy0pVI33',
+            '_blank'
+        );
     } else if (el.textContent.includes('latte')) {
         window.open(
-            '',
+            'http://goo.gl/forms/IeBDNfoimoYBL8T13',
             '_blank'
         );
     } 
@@ -18,12 +28,12 @@ function addDrink(el) {
 function showDirections(div) {
     //direction service api call to show a route from you to the marker on the map
     if (div) {
-        destination_coconut = $(div).clone().children().remove().end().text();
+        destination_building = $(div).clone().children().remove().end().text();
     }
 
     if (markers) {
         markers.forEach(function(marker) {
-            if (marker.title === destination_coconut) {
+            if (marker.title === destination_building) {
                 var start = new google.maps.LatLng(userLat, userLng);
                 var end = marker.getPosition();
                 var request = {
@@ -105,9 +115,147 @@ function removeGrayOutFromMap() {
 }
 
 
-// COCONUT STUFF //
+// DRINK STUFF //
 
-function initCoconuts() {
+function setDrinkType(drink_type) {
+    window.current_drink_type = drink_type;
+    window.drinks = window[drink_type + 's'];
+
+    $('#add-a-drink').text('add a ' + drink_type);
+    $('#drink-list-title').text('where my ' + drink_type);
+
+    sortDrinksByDistance();
+    populateDrinkList();
+    placeDrinkMarkers();
+}
+
+function sortDrinksByDistance() {
+    // We need to sort the drinks by location.
+    // We want the closest ones to show up at the top of the list.
+    drinks.sort(function(a, b) {
+        a_distance = calculateDistance(userLat, userLng, a.lat, a.lng);
+        b_distance = calculateDistance(userLat, userLng, b.lat, b.lng);
+        return a_distance - b_distance;
+    });
+}
+
+function populateDrinkList() {
+    var list = $('#drink-list');
+    list.empty();
+    drinks.forEach(function(drink) {
+        list.append('<div class="drink-list-item" onmouseover="markerHover(this);showRightArrow(this)" onmouseout="markerStop(this);hideRightArrow(this)" onClick="showDirections(this)">' + drink.building + '</div>');
+        var current_list_item = list.children().last('.drink-list-item');
+        
+        var current_distance = calculateDistance(userLat, userLng, drink.lat, drink.lng);
+        current_distance = Math.round(current_distance / 100) / 10;  // Round to nearest tenth.
+        current_list_item.prepend('<div class="distance">' + current_distance + ' km</div>');
+
+        current_list_item.prepend('<img class="arrow" src="imgs/right-arrow.png">');
+    });
+}
+
+function placeDrinkMarkers() { //also adds marker listeners 
+    // Place markers //
+    if (window.markers) {
+        window.markers.forEach(function(marker) {
+            marker.setMap(null);
+        });
+    }
+
+    window.markers = [];
+    drinks.forEach(function(drink) {
+        var marker = new google.maps.Marker({
+            position: {
+                'lat': drink.lat,
+                'lng': drink.lng
+            },
+            map: map,
+            animation: google.maps.Animation.DROP,
+            title: drink.building,
+            icon: 'imgs/' + window.current_drink_type + '_marker.png'
+        });
+        markers.push(marker);
+        marker.addListener('click', function() {
+            //map.setZoom(18);
+            //map.setCenter(marker.getPosition());
+            var start = new google.maps.LatLng(userLat, userLng);
+            var end = marker.getPosition();
+            var request = {
+                origin: start,
+                destination: end,
+                travelMode: google.maps.TravelMode.WALKING
+            };
+            directionsService.route(request, function(response, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(response);
+                }
+            });
+            // var infowindow = new google.maps.InfoWindow({
+            //     content: data
+            // });
+            //infowindow.open(map, marker);
+        });
+    });
+}
+
+
+// INITIALIZATION & SETUP //
+
+$(function() {
+    // Set up auto-resizing for the map and list
+    $(window).resize(function() {
+        // Only resize the map & list if the user has already finished entering their location.
+        if ($('#map-overlay').length == 0) {
+            // Size differently on mobile than on desktop
+            if (isMobile()) {
+                $('#map').css({
+                    width: ($(window).width() - 16) + 'px'
+                });
+                $('#details-panel').css({
+                    width: ($(window).width() - 16) + 'px'
+                });
+            } else {
+                $('#map').css({
+                    width: ($(window).width() - 316) + 'px'
+                });
+                $('#details-panel').css({
+                    width: '292px'
+                });
+            }
+        }
+    });
+
+    // GET THE COCONUTS! NOWNOWNOW!
+    $.get('https://jeffreyterry.github.io/where-my-coconut/drink-information.json', function(drinks) {
+        coconuts = drinks.filter(function(drink) {
+            return drink.type == 'coconut';
+        });
+
+        // Vitamin Waters can be found in the same fridges as Coconut Waters
+        vitamins = [...coconuts];
+        vitamins.forEach(function(vitamin) {
+            vitamin.type = 'vitamin';
+        });
+
+        // Almond Milks can be found in the same fridges as Coconut Waters
+        almonds = [...coconuts];
+        almonds.forEach(function(vitamin) {
+            almonds.type = 'almond';
+        });
+
+        lattes = drinks.filter(function(drink) {
+            return drink.type == 'latte';
+        });
+
+        window.current_drink_type = 'coconut';
+        window.drinks = window['coconuts'];
+
+        initializeApplication();
+    });
+});
+
+
+function initializeApplication() {
     getCurrentLocation(function(location) {
         if (location.error) {
             // The center of the Microsoft Campus
@@ -167,121 +315,19 @@ function initCoconuts() {
 
         directionsDisplay.setMap(map);
 
-        // Sort the coconuts //
-        sortCoconutsByDistance();
+        // Sort the drinks //
+        sortDrinksByDistance();
 
         // If we were able to automatically find the user's location, we can reposition the map now and populate the list.
         if (!location.error) {
-            sortCoconutsByDistance();
-            populateCoconutList();
+            sortDrinksByDistance();
+            populateDrinkList();
             $('#details-panel').css('visibility', 'visible');
 
             repositionCurrentLocationMarker();
             panToCurrentLocation();
 
-            placeCoconutMarkers();
+            placeDrinkMarkers();
         }
     });
 }
-
-function placeCoconutMarkers() { //also adds marker listeners 
-    // Place markers //
-    markers = [];
-    coconuts.forEach(function(coconut) {
-        var marker = new google.maps.Marker({
-            position: {
-                'lat': coconut.lat,
-                'lng': coconut.lng
-            },
-            map: map,
-            animation: google.maps.Animation.DROP,
-            title: coconut.building,
-            icon: 'imgs/coconut_water.png'
-        });
-        markers.push(marker);
-        marker.addListener('click', function() {
-            //map.setZoom(18);
-            //map.setCenter(marker.getPosition());
-            var start = new google.maps.LatLng(userLat, userLng);
-            var end = marker.getPosition();
-            var request = {
-                origin: start,
-                destination: end,
-                travelMode: google.maps.TravelMode.WALKING
-            };
-            directionsService.route(request, function(response, status) {
-                if (status == google.maps.DirectionsStatus.OK) {
-                    directionsDisplay.setDirections(response);
-                }
-            });
-            // var infowindow = new google.maps.InfoWindow({
-            //     content: data
-            // });
-            //infowindow.open(map, marker);
-        });
-    });
-}
-
-function sortCoconutsByDistance() {
-    // We need to sort the coconuts by location.
-    // We want the closest ones to show up at the top of the list.
-    coconuts.sort(function(a, b) {
-        a_distance = calculateDistance(userLat, userLng, a.lat, a.lng);
-        b_distance = calculateDistance(userLat, userLng, b.lat, b.lng);
-        return a_distance - b_distance;
-    });
-}
-
-function populateCoconutList() {
-    var list = $('#drink-list');
-    list.empty();
-    coconuts.forEach(function(coconut) {
-        list.append('<div class="drink-list-item" onmouseover="markerHover(this);showRightArrow(this)" onmouseout="markerStop(this);hideRightArrow(this)" onClick="showDirections(this)">' + coconut.building + '</div>');
-        var current_list_item = list.children().last('.drink-list-item');
-        
-        var current_distance = calculateDistance(userLat, userLng, coconut.lat, coconut.lng);
-        current_distance = Math.round(current_distance / 100) / 10;  // Round to nearest tenth.
-        current_list_item.prepend('<div class="distance">' + current_distance + ' km</div>');
-
-        current_list_item.prepend('<img class="arrow" src="imgs/right-arrow.png">');
-    });
-}
-
-
-// INITIALIZATION & SETUP //
-
-$(function() {
-    // Set up auto-resizing for the map and list
-    $(window).resize(function() {
-        // Only resize the map & list if the user has already finished entering their location.
-        if ($('#map-overlay').length == 0) {
-            // Size differently on mobile than on desktop
-            if (isMobile()) {
-                $('#map').css({
-                    width: ($(window).width() - 16) + 'px'
-                });
-                $('#details-panel').css({
-                    width: ($(window).width() - 16) + 'px'
-                });
-            } else {
-                $('#map').css({
-                    width: ($(window).width() - 316) + 'px'
-                });
-                $('#details-panel').css({
-                    width: '292px'
-                });
-            }
-        }
-    });
-
-    // GET THE COCONUTS! NOWNOWNOW!
-    $.get('https://jeffreyterry.github.io/where-my-coconut/drink-information.json', function(drinks) {
-        coconuts = drinks.filter(function(drink) {
-            return drink.type == 'coconut';
-        });
-        lattes = drinks.filter(function(drink) {
-            return drink.type == 'latte';
-        });
-        initCoconuts();
-    });
-});
