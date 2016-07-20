@@ -154,9 +154,6 @@ body {
 
 #pac-input {
     display: none;
-    position: absolute;
-    z-index: 2 !important;
-    left: 113px !important;
 }
 
 #map-overlay {

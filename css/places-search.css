@@ -17,7 +17,35 @@
   margin-left: 12px;
   padding: 0 11px 0 13px;
   text-overflow: ellipsis;
-  width: 300px;
+  width: 300px;  /* Will be modified below for small devices */
+  position: absolute;
+  z-index: 2 !important;
+}
+
+@media screen and (max-width: 520px) {
+  #pac-input {
+    width: calc(100% - 140px);
+  }
+}
+
+@media screen and (max-width: 350px) {
+  #pac-input {
+    width: calc(100% - 140px);
+  }
+}
+
+@media screen and (max-width: 215px) {
+  #pac-input {
+    left: 20px;
+    right: 20px;
+    width: calc(100% - 25px);
+  }
+}
+
+@media screen and (min-width: 216px) {
+  #pac-input {
+    left: 113px !important;
+  }
 }
 
 #pac-input:focus {
