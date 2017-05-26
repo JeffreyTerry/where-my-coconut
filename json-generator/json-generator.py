@@ -7,11 +7,11 @@ import googlemaps
 gmaps = googlemaps.Client(key='AIzaSyBwxzwTENmcAmiLA3B85GVuTE2oJbGkh-4', timeout=2)
 
 
-def generate_coconuts(operation):
+def generate_coconuts(operation="generate_all"):
     return generate_drinks('coconut', operation)
 
 
-def generate_lattes(operation):
+def generate_lattes(operation="generate_all"):
     return generate_drinks('latte', operation)
 
 
