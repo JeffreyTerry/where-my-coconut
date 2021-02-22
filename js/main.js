@@ -226,7 +226,7 @@ $(function() {
     });
 
     // GET THE COCONUTS! NOWNOWNOW!
-    $.get('https://jeffreyterry.github.io/where-my-coconut/drink-information.json', function(drinks) {
+    $.get('https://coconut.jeffterry.org/drink-information.json', function(drinks) {
         coconuts = drinks.filter(function(drink) {
             return drink.type == 'coconut';
         });
