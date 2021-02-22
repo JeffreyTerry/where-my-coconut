@@ -31,8 +31,8 @@ function showDirections(div) {
         destination_building = $(div).clone().children().remove().end().text();
     }
 
-    if (markers) {
-        markers.forEach(function(marker) {
+    if (window.markers) {
+        window.markers.forEach(function(marker) {
             if (marker.title === destination_building) {
                 var start = new google.maps.LatLng(userLat, userLng);
                 var end = marker.getPosition();
@@ -65,9 +65,9 @@ function hideRightArrow(div) {
 }
 
 function markerHover(div) {
-    if (markers) {
+    if (window.markers) {
         var building_name = $(div).clone().children().remove().end().text();
-        markers.forEach(function(marker) {
+        window.markers.forEach(function(marker) {
             if (marker.title == building_name) {
                 marker.setAnimation(google.maps.Animation.BOUNCE);
             }
@@ -76,9 +76,9 @@ function markerHover(div) {
 }
 
 function markerStop(div) {
-    if (markers) {
+    if (window.markers) {
         var building_name = $(div).clone().children().remove().end().text();
-        markers.forEach(function(marker) {
+        window.markers.forEach(function(marker) {
             if (marker.title == building_name) {
                 marker.setAnimation(null);
             }
@@ -102,14 +102,16 @@ function bobArrowUpAndDown() {
 }
 
 function grayOutMap() {
-    $('#map > div').append("<div id='map-overlay'></div>");
+    // TODO fix the z-index issue and put the overlay back in
+    // $('#map > div').append("<div id='map-overlay'></div>");
     $('#map > div').append("<img id='map-overlay-arrow' src='imgs/up-arrow.png'>");
     $('#map > div').append("<div id='map-overlay-instructions'>enter your location</div>");
     bobArrowUpAndDown();
 }
 
 function removeGrayOutFromMap() {
-    $('#map > div > #map-overlay').remove();
+    // TODO fix the z-index issue and put the overlay back in
+    // $('#map > div > #map-overlay').remove();
     $('#map > div > #map-overlay-arrow').remove();
     $('#map > div > #map-overlay-instructions').remove();
 }
@@ -161,7 +163,6 @@ function placeDrinkMarkers() { //also adds marker listeners
             marker.setMap(null);
         });
     }
-
     window.markers = [];
     drinks.forEach(function(drink) {
         var marker = new google.maps.Marker({
@@ -169,12 +170,12 @@ function placeDrinkMarkers() { //also adds marker listeners
                 'lat': drink.lat,
                 'lng': drink.lng
             },
-            map: map,
+            map: window.map,
             animation: google.maps.Animation.DROP,
             title: drink.building,
             icon: 'imgs/' + window.current_drink_type + '_marker.png'
         });
-        markers.push(marker);
+        window.markers.push(marker);
         marker.addListener('click', function() {
             //map.setZoom(18);
             //map.setCenter(marker.getPosition());
@@ -226,7 +227,7 @@ $(function() {
     });
 
     // GET THE COCONUTS! NOWNOWNOW!
-    $.get('https://coconut.jeffterry.org/drink-information.json', function(drinks) {
+    $.get('/drink-information.json', function(drinks) {
         coconuts = drinks.filter(function(drink) {
             return drink.type == 'coconut';
         });
@@ -277,7 +278,7 @@ function initializeApplication() {
 
         // Load the map, then initialize the search box //
         var mapDiv = document.getElementById('map');
-        map = new google.maps.Map(mapDiv, {
+        window.map = new google.maps.Map(mapDiv, {
             center: {
                 lat: userLat,
                 lng: userLng
@@ -313,7 +314,7 @@ function initializeApplication() {
         });
         directionsService = new google.maps.DirectionsService();
 
-        directionsDisplay.setMap(map);
+        directionsDisplay.setMap(window.map);
 
         // Sort the drinks //
         sortDrinksByDistance();

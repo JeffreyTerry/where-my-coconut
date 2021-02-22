@@ -36,7 +36,7 @@ function initSearchBox() {
         $('#details-panel').css('visibility', 'visible');
 
         // This code only runs if we couldn't automatically find the user's location and if they just finished specifying it themselves.
-        if ($('#map-overlay').length > 0) {
+        if ($('#map-overlay-instructions').length > 0) {
             removeGrayOutFromMap();
             placeDrinkMarkers();
             
