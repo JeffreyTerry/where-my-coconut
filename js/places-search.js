@@ -33,6 +33,7 @@ function initSearchBox() {
         // We need the current location globals to be set in order for 'sortDrinksByDistance' to work, so don't move this up.
         sortDrinksByDistance();
         populateDrinkList();
+        // Animate the detail-panel in
         $('#details-panel').css('visibility', 'visible');
 
         // This code only runs if we couldn't automatically find the user's location and if they just finished specifying it themselves.
@@ -44,6 +45,7 @@ function initSearchBox() {
                 // If necessary (i.e. if we're in desktop mode), swoosh the drink list into the window from the right.
                 var animationTime = 350;
 
+                // Animate the detail-panel in
                 $('#details-panel').animate({width: '292px'}, animationTime);
                 $('#map').animate({width: ($(window).width() - 316) + 'px'}, animationTime);
 
